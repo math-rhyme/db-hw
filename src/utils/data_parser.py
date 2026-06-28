@@ -12,9 +12,8 @@ class DataParser:
     def parse_products() -> pd.DataFrame:
         """Parse products CSV file."""
         df = pd.read_csv(DATA_DIR / "products.csv")
-        # Convert price to float
+        df.columns = df.columns.str.lower()
         df["price"] = df["price"].astype(float)
-        # Convert tags to list
         df["tags"] = df["tags"].apply(lambda x: x.split(","))
         return df
 
@@ -22,21 +21,23 @@ class DataParser:
     def parse_users() -> pd.DataFrame:
         """Parse users CSV file."""
         df = pd.read_csv(DATA_DIR / "users.csv")
-        # Convert interests to list
+        df.columns = df.columns.str.lower()
         df["interests"] = df["interests"].apply(lambda x: x.split(","))
-        # Convert join_date to datetime
         df["join_date"] = pd.to_datetime(df["join_date"])
         return df
 
     @staticmethod
     def parse_categories() -> pd.DataFrame:
         """Parse categories CSV file."""
-        return pd.read_csv(DATA_DIR / "categories.csv")
+        df = pd.read_csv(DATA_DIR / "categories.csv")
+        df.columns = df.columns.str.lower()
+        return df
 
     @staticmethod
     def parse_sellers() -> pd.DataFrame:
         """Parse sellers CSV file."""
         df = pd.read_csv(DATA_DIR / "sellers.csv")
+        df.columns = df.columns.str.lower()
         df["rating"] = df["rating"].astype(float)
         df["joined"] = pd.to_datetime(df["joined"])
         return df
@@ -55,7 +56,6 @@ class CachedDataParser(DataParser):
             self._cache["products"] = super().parse_products()
         return self._cache["products"]
 
-    # Python 3.12+ allows better pattern matching
     def get_data(self, data_type: str) -> pd.DataFrame:
         """Get data by type using pattern matching."""
         match data_type:
